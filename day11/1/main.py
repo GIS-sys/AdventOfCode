@@ -13,27 +13,27 @@ class Field:
     def __init__(self, rows):
         self.rows = rows
         self.precalcEmptys()
-        #print(self.emptyCol, self.emptyRow)
+        print(self.emptyCol, self.emptyRow)
 
     def precalcEmptys(self):
-        self.emptyCol = []
+        self.emptyRow = []
         for y in range(len(self.rows[0])):
             occupied = False
             for x in range(len(self.rows)):
                 if self.rows[x][y] == "#":
                     occupied = True
                     break
-            if occupied:
-                self.emptyCol.append(y)
-        self.emptyRow = []
+            if not occupied:
+                self.emptyRow.append(y)
+        self.emptyCol = []
         for x in range(len(self.rows)):
             occupied = False
             for y in range(len(self.rows[0])):
                 if self.rows[x][y] == "#":
                     occupied = True
                     break
-            if occupied:
-                self.emptyRow.append(x)
+            if not occupied:
+                self.emptyCol.append(x)
 
     def galaxies(self):
         for x in range(len(self.rows)):
