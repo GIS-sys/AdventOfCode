@@ -2,6 +2,8 @@ from functools import cmp_to_key
 import numpy as np
 
 
+FACTOR = 2
+
 def countNumbersInBetween(arr, left, right):
     count = 0
     for x in arr:
@@ -47,7 +49,7 @@ class Field:
         s += countNumbersInBetween(self.emptyRow, min(a[0], b[0]), max(a[0], b[0]))
         s += countNumbersInBetween(self.emptyCol, min(a[1], b[1]), max(a[1], b[1]))
         print(f"{s=}")
-        return abs(a[0] - b[0]) + abs(a[1] - b[1]) + s
+        return abs(a[0] - b[0]) + abs(a[1] - b[1]) + s * (FACTOR-1)
         #return abs(a[0] - b[0]) + abs(a[1] - b[1]) + 1
 
 with open("output.txt", "w") as fout:
