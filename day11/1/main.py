@@ -16,7 +16,7 @@ class Field:
         print(self.emptyCol, self.emptyRow)
 
     def precalcEmptys(self):
-        self.emptyRow = []
+        self.emptyCol = []
         for y in range(len(self.rows[0])):
             occupied = False
             for x in range(len(self.rows)):
@@ -24,8 +24,8 @@ class Field:
                     occupied = True
                     break
             if not occupied:
-                self.emptyRow.append(y)
-        self.emptyCol = []
+                self.emptyCol.append(y)
+        self.emptyRow = []
         for x in range(len(self.rows)):
             occupied = False
             for y in range(len(self.rows[0])):
@@ -33,7 +33,7 @@ class Field:
                     occupied = True
                     break
             if not occupied:
-                self.emptyCol.append(x)
+                self.emptyRow.append(x)
 
     def galaxies(self):
         for x in range(len(self.rows)):
@@ -42,15 +42,19 @@ class Field:
                     yield (x,y)
 
     def shortestPath(self, a, b):
+        # TODO
         s = 0
         s += countNumbersInBetween(self.emptyRow, min(a[0], b[0]), max(a[0], b[0]))
         s += countNumbersInBetween(self.emptyCol, min(a[1], b[1]), max(a[1], b[1]))
-        return abs(a[0] - b[0]) + abs(a[1] - b[1]) + s + 1
+        print(f"{s=}")
+        return abs(a[0] - b[0]) + abs(a[1] - b[1]) + s
+        #return abs(a[0] - b[0]) + abs(a[1] - b[1]) + 1
 
 with open("output.txt", "w") as fout:
     with open("input.txt", "r") as fin:
         s = 0
         field = Field([x for x in map(str.strip, fin.read().split("\n")) if x != ""])
+        #print(field.emptyCol, field.emptyRow, "col row")
         for a in field.galaxies():
             for b in field.galaxies():
                 if a != b:
