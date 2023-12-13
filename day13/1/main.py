@@ -4,6 +4,36 @@ import numpy as np
 
 DEBUG = False
 
+class Reflection:
+    def __init__(self, hor, ver):
+        self.error = False
+        if hor != -1:
+            self.is_hor = True
+            self.val = hor
+        elif ver != -1:
+            self.is_hor = False
+            self.val = ver
+        else:
+            self.error = True
+
+    def isError(self):
+        return self.error
+
+    def isHor(self):
+        return self.is_hor
+
+    def isVer(self):
+        return not self.isHor()
+
+    def getVal(self):
+        return self.val
+
+    def getScore(self):
+        return self.val if not self.isHor() else self.val * 100
+
+    def __eq__(self, other):
+        return not self.isError() and not other.isError() and self.isHor() == other.isHor() and self.getVal() == other.getVal()
+
 class Pattern:
     def __init__(self, lines):
         self.lines = lines
@@ -39,6 +69,16 @@ class Pattern:
             return -1
         return next(iter(res))
 
+    def findReflection(self):
+        reflection = Reflection(self.findReflectionHor(), self.findReflectionVer())
+        if reflection.isError():
+            print(self.lines)
+            DEBUG = True
+            self.findReflectionHor()
+            self.findReflectionVer()
+            exit(1)
+        return reflection
+
 with open("output.txt", "w") as fout:
     with open("input.txt", "r") as fin:
         s = 0
@@ -52,16 +92,6 @@ with open("output.txt", "w") as fout:
                 continue
             lines.append(line)
         for pat in patterns:
-            hor = pat.findReflectionHor()
-            ver = pat.findReflectionVer()
-            if hor != -1:
-                s += 100 * hor
-            elif ver != -1:
-                s += ver
-            else:
-                print(pat.lines)
-                DEBUG = True
-                pat.findReflectionHor()
-                pat.findReflectionVer()
-                exit(1)
+            reflection = pat.findReflection()
+            s += reflection.getScore()
         fout.write(str(s))
