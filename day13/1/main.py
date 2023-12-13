@@ -70,6 +70,7 @@ class Pattern:
         return next(iter(res))
 
     def findReflection(self):
+        global DEBUG
         reflection = Reflection(self.findReflectionHor(), self.findReflectionVer())
         if reflection.isError():
             print(self.lines)
