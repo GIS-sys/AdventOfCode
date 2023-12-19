@@ -21,28 +21,38 @@ with open("output.txt", "w") as fout:
                 break
             sequence += line
         sequence = line.split(",")
-        indexes = {}
         boxes = [[] for _ in range(256)]
         for raw in sequence:
-            label = raw[:2]
-            operation = raw[2]
-            value = (int(raw[3]) if operation == "=" else None)
+            if raw[-1] == "-":
+                label = raw[:-1]
+                operation = "-"
+                value = None
+            else:
+                label = raw[:-2]
+                operation = "="
+                value = int(raw[-1])
+            # print(label, operation, value)
             h = apply_hash(label)
             if operation == "-":
-                if not (label in indexes):
-                    continue
-                boxes[h].pop(indexes[label])
-                indexes.pop(label)
+                i = None
+                for i in range(len(boxes[h])):
+                    if boxes[h][i][0] == label:
+                        boxes[h].pop(i)
+                        break
             if operation == "=":
-                if label in indexes:
-                    boxes[h][indexes[label]] = (label, value)
-                else:
+                i = 0
+                for i in range(len(boxes[h])):
+                    if boxes[h][i][0] == label:
+                        boxes[h][i] = (label, value)
+                        i = None
+                        break
+                if not (i is None):
                     boxes[h].append((label, value))
-                    indexes[label] = len(boxes[h]) - 1
+            # print(boxes)
         for i, box in enumerate(boxes):
             for j, lens in enumerate(box):
                 k = lens[1]
-                print(i, j, k)
+                # print(i, j, k)
                 s += (i + 1) * (j + 1) * k
         fout.write(str(s))
 
