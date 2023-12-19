@@ -93,10 +93,9 @@ class Field:
             changed = False
             for y in range(len(self.cells)):
                 for x, c in enumerate(self.cells[y]):
-                    changed = changed or c.energize(self.get_neighbours(x, y))
+                    changed = c.energize(self.get_neighbours(x, y)) or changed
             # self.print_debug()
             print(self)
-        print(self)
 
     def count_energized(self):
         res = 0
