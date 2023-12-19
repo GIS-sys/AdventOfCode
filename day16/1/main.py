@@ -114,7 +114,41 @@ class Field:
         res = ""
         for r in self.cells:
             for c in r:
-                res += ("#" if True in c.lights else ".")
+                slights = "".join([str(int(x)) for x in c.lights])
+                if slights == "0000":
+                    res += "."
+                elif slights == "0001":
+                    res += "\u2191"
+                elif slights == "0010":
+                    res += "\u2190"
+                elif slights == "0100":
+                    res += "\u2193"
+                elif slights == "1000":
+                    res += "\u2192"
+                elif slights == "0011":
+                    res += "\u2198"
+                elif slights == "0101":
+                    res += "\u2195"
+                elif slights == "1001":
+                    res += "\u2199"
+                elif slights == "0110":
+                    res += "\u2197"
+                elif slights == "1010":
+                    res += "\u2194"
+                elif slights == "1100":
+                    res += "\u2196"
+                elif slights == "0111":
+                    res += "#"
+                elif slights == "1011":
+                    res += "#"
+                elif slights == "1101":
+                    res += "#"
+                elif slights == "1110":
+                    res += "#"
+                elif slights == "1111":
+                    res += "#"
+                else:
+                    res += "?"
             res += "\n"
         return res
 
