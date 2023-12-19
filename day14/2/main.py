@@ -68,16 +68,16 @@ with open("output.txt", "w") as fout:
         dish = Dish(lines)
         used = []
         used_weights = []
+        cycle = None
         while True:
             if dish.__repr__() in used:
                 break
             used.append(dish.__repr__())
             used_weights.append(dish.weight())
             dish.cycle()
-        print(dish.__repr__())
-        print(len(used))
-        print(used.index(dish.__repr__()))
-        print(used_weights)
-        s = used_weights[1_000_000_000 % (len(used) - used.index(dish.__repr__()))]
+        bias = used.index(dish.__repr__())
+        cycle = len(used) - bias
+        print(used_weights, bias, cycle)
+        s = used_weights[(1_000_000_000 - bias) % cycle + bias]
         fout.write(str(s))
 
