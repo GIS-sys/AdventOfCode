@@ -1,5 +1,4 @@
-from functools import cmp_to_key
-import numpy as np
+from tqdm import tqdm
 
 
 class Cell:
@@ -77,16 +76,28 @@ class Field:
 
     def get_neighbours(self, x, y):
         # left, top, right, bottom
-        # TODO USE starting_point
+        # TODO REWORK starting_point TO BE A LIGHT SOURCE BUT IN FORMAT OF (X,Y)
         neighbours = []
-        if x == 0 and y == 0:
+        if self.starting_point[0] == 0 and x == 0 and y == self.starting_point[1]:
             neighbours.append(Cell("."))
             neighbours[-1].lights[0] = True
         else:
             neighbours.append(self.get_or_default(x-1, y))
-        neighbours.append(self.get_or_default(x, y-1))
-        neighbours.append(self.get_or_default(x+1, y))
-        neighbours.append(self.get_or_default(x, y+1))
+        if self.starting_point[0] == 1 and y == 0 and x == self.starting_point[1]:
+            neighbours.append(Cell("."))
+            neighbours[-1].lights[1] = True
+        else:
+            neighbours.append(self.get_or_default(x, y-1))
+        if self.starting_point[0] == 2 and x == len(self.cells[0]) - 1 and y == self.starting_point[1]:
+            neighbours.append(Cell("."))
+            neighbours[-1].lights[2] = True
+        else:
+            neighbours.append(self.get_or_default(x+1, y))
+        if self.starting_point[0] == 3 and y == len(self.cells) - 1 and x == self.starting_point[1]:
+            neighbours.append(Cell("."))
+            neighbours[-1].lights[3] = True
+        else:
+            neighbours.append(self.get_or_default(x, y+1))
         return neighbours
 
     def energize(self):
@@ -167,9 +178,12 @@ with open("output.txt", "w") as fout:
         all_sides += [(i, 1) for i in range(len(lines[0]))]
         all_sides += [(i, 2) for i in range(len(lines))]
         all_sides += [(i, 3) for i in range(len(lines[0]))]
-        for starting_point in all_sides:
+        for starting_point in tqdm(all_sides):
             field = Field(lines, starting_point=starting_point)
             field.energize()
-            s = max(s, field.count_energized())
+            energy = field.count_energized()
+            s = max(s, energy)
+            with open(f"tmp/{energy}_{starting_point[0]}_{starting_point[1]}.txt", "w") as ftmp:
+                ftmp.write(str(field))
         fout.write(str(s))
 
