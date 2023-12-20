@@ -65,9 +65,9 @@ class Cell:
         return self.t + str(int(self.lights[0])) + str(int(self.lights[1])) + str(int(self.lights[2])) + str(int(self.lights[3]))
 
 class Field:
-    def __init__(self, lines, starting_point=(0, 0)):
+    def __init__(self, lines, starting_point=(0, 0), starting_direction=[0]):
         self.cells = [[Cell(cell) for cell in line] for line in lines]
-        self.starting_point = starting_point
+        self.cells[starting_point[1]][starting_point[0]].lights[starting_direction] = True
 
     def get_or_default(self, x, y):
         if y >= 0 and y < len(self.cells) and x >= 0 and x < len(self.cells[y]):
@@ -76,28 +76,11 @@ class Field:
 
     def get_neighbours(self, x, y):
         # left, top, right, bottom
-        # TODO REWORK starting_point TO BE A LIGHT SOURCE BUT IN FORMAT OF (X,Y)
         neighbours = []
-        if self.starting_point[0] == 0 and x == 0 and y == self.starting_point[1]:
-            neighbours.append(Cell("."))
-            neighbours[-1].lights[0] = True
-        else:
-            neighbours.append(self.get_or_default(x-1, y))
-        if self.starting_point[0] == 1 and y == 0 and x == self.starting_point[1]:
-            neighbours.append(Cell("."))
-            neighbours[-1].lights[1] = True
-        else:
-            neighbours.append(self.get_or_default(x, y-1))
-        if self.starting_point[0] == 2 and x == len(self.cells[0]) - 1 and y == self.starting_point[1]:
-            neighbours.append(Cell("."))
-            neighbours[-1].lights[2] = True
-        else:
-            neighbours.append(self.get_or_default(x+1, y))
-        if self.starting_point[0] == 3 and y == len(self.cells) - 1 and x == self.starting_point[1]:
-            neighbours.append(Cell("."))
-            neighbours[-1].lights[3] = True
-        else:
-            neighbours.append(self.get_or_default(x, y+1))
+        neighbours.append(self.get_or_default(x-1, y))
+        neighbours.append(self.get_or_default(x, y-1))
+        neighbours.append(self.get_or_default(x+1, y))
+        neighbours.append(self.get_or_default(x, y+1))
         return neighbours
 
     def energize(self):
@@ -173,17 +156,17 @@ with open("output.txt", "w") as fout:
             if line == "":
                 break
             lines.append(line)
-        all_sides = [] # index + side (left, top, right, bottom)
-        all_sides += [(i, 0) for i in range(len(lines))]
-        all_sides += [(i, 1) for i in range(len(lines[0]))]
-        all_sides += [(i, 2) for i in range(len(lines))]
-        all_sides += [(i, 3) for i in range(len(lines[0]))]
-        for starting_point in tqdm(all_sides):
-            field = Field(lines, starting_point=starting_point)
+        all_sides = [] # coordinates + direction (left, top, right, bottom)
+        all_sides += [((0, i), 0) for i in range(len(lines))]
+        all_sides += [((i, 0), 1) for i in range(len(lines[0]))]
+        all_sides += [((len(lines[0])-1, i), 2) for i in range(len(lines))]
+        all_sides += [((i, len(lines)-1), 3) for i in range(len(lines[0]))]
+        for starting in tqdm(all_sides):
+            field = Field(lines, starting_point=starting[0], starting_direction=starting[1])
             field.energize()
             energy = field.count_energized()
             s = max(s, energy)
-            with open(f"tmp/{energy}_{starting_point[0]}_{starting_point[1]}.txt", "w") as ftmp:
+            with open(f"tmp/{energy}_{starting[0][0]}_{starting[0][1]}_{starting[1]}.txt", "w") as ftmp:
                 ftmp.write(str(field))
         fout.write(str(s))
 
