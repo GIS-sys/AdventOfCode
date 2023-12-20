@@ -36,7 +36,11 @@ class Field:
         distances[0][0][3] = [self.lines[0][0] for _ in range(4)]
         parents = empty_arr((len(self.lines), len(self.lines[0]), 4, 4), None)
         queue = [(0, 0, 3, d) for d in range(4)]
+        step = 0
         while len(queue) > 0:
+            if step % 100000 == 0:
+                print(len(queue))
+            step += 1
             x, y, z, d = queue[0]
             queue = queue[1:]
             # fill possible next with next cells
