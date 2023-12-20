@@ -51,8 +51,8 @@ class Field:
                 possible_next.append((x-1, y, 2, 2))
             if d == 2:
                 possible_next.append((x-1, y, z-1, d))
-                possible_next.append((x, y-1, 2, 1))
-                possible_next.append((x, y+1, 2, 3))
+                possible_next.append((x, y+1, 2, 1))
+                possible_next.append((x, y-1, 2, 3))
             if d == 3:
                 possible_next.append((x, y-1, z-1, d))
                 possible_next.append((x+1, y, 2, 0))
@@ -74,14 +74,14 @@ class Field:
         cur = (len(self.lines[0])-1, len(self.lines)-1, min_z, min_d)
         while cur != None:
             path.append(cur[:2])
-            print(cur)
             cur = parents[cur[0]][cur[1]][cur[2]][cur[3]]
+        path = path[::-1]
         print(path)
         self.print_with_path(path)
-        a = [[min([min([distances[y][x][z][d] for d in range(4)]) for z in range(4)]) for y in range(len(distances))] for x in range(len(distances[0]))]
-        print("\n".join(map(lambda x: " ".join(map(str, x)), a)))
-        while (i := input()):
-            exec(i)
+        #a = [[min([min([distances[y][x][z][d] for d in range(4)]) for z in range(4)]) for y in range(len(distances))] for x in range(len(distances[0]))]
+        #print("\n".join(map(lambda x: " ".join(map(str, x)), a)))
+        #while (i := input()):
+        #    exec(i)
         return path
 
     def path_length(self, path):
@@ -109,6 +109,6 @@ with open("output.txt", "w") as fout:
             lines.append(line)
         field = Field(lines)
         path = field.bfs3()
-        s = field.path_length(path)
+        s = field.path_length(path[1:])
         fout.write(str(s))
 
