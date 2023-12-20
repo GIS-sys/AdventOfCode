@@ -1,6 +1,4 @@
-from functools import cmp_to_key
-import numpy as np
-
+from collections import deque
 
 def empty_arr(size, default):
     if len(size) == 1:
@@ -35,14 +33,15 @@ class Field:
         distances = empty_arr((len(self.lines), len(self.lines[0]), 4, 4), MAX_DISTANCE)
         distances[0][0][3] = [self.lines[0][0] for _ in range(4)]
         parents = empty_arr((len(self.lines), len(self.lines[0]), 4, 4), None)
-        queue = [(0, 0, 3, d) for d in range(4)]
+        queue = deque()
+        for d in range(4):
+            queue.append((0, 0, 3, d))
         step = 0
         while len(queue) > 0:
             if step % 100000 == 0:
                 print(len(queue))
             step += 1
-            x, y, z, d = queue[0]
-            queue = queue[1:]
+            x, y, z, d = queue.popleft()
             # fill possible next with next cells
             possible_next = []
             if d == 0:
