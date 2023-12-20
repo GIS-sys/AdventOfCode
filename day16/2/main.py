@@ -65,7 +65,7 @@ class Field:
     def __init__(self, lines, starting_point=(0, 0), starting_direction=[0]):
         self.cells = [[Cell(cell) for cell in line] for line in lines]
         self.starting_point = starting_point
-        if starting_point[1] < len(self.cells) and starting_point[0] < len(self.cells[0]):
+        if 0 <= starting_point[1] and starting_point[1] < len(self.cells) and 0 <= starting_point[0] and starting_point[0] < len(self.cells[0]):
             self.cells[starting_point[1]][starting_point[0]].lights[starting_direction] = True
 
     def get_or_default(self, x, y):
@@ -160,10 +160,10 @@ with open("output.txt", "w") as fout:
                 break
             lines.append(line)
         all_sides = [] # coordinates + direction (left, top, right, bottom)
-        all_sides += [((0, i), 0) for i in range(len(lines))]
-        all_sides += [((i, 0), 1) for i in range(len(lines[0]))]
-        all_sides += [((len(lines[0])-1, i), 2) for i in range(len(lines))]
-        all_sides += [((i, len(lines)-1), 3) for i in range(len(lines[0]))]
+        all_sides += [((-1, i), 0) for i in range(len(lines))]
+        all_sides += [((i, -1), 1) for i in range(len(lines[0]))]
+        all_sides += [((len(lines[0]), i), 2) for i in range(len(lines))]
+        all_sides += [((i, len(lines)), 3) for i in range(len(lines[0]))]
         for starting in tqdm(all_sides):
             field = Field(lines, starting_point=starting[0], starting_direction=starting[1])
             field.energize()
