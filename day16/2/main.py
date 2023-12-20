@@ -4,9 +4,6 @@ from tqdm import tqdm
 class Cell:
     def __init__(self, t):
         self.t = t
-        # self.empty = (t == ".")
-        # self.splitter = (t in "-|")
-        # self.mirror = (t in "/\\")
         self.lights = [False for _ in range(4)] # right, bottom, left, top
 
     def energize(self, neighbours):
@@ -67,11 +64,17 @@ class Cell:
 class Field:
     def __init__(self, lines, starting_point=(0, 0), starting_direction=[0]):
         self.cells = [[Cell(cell) for cell in line] for line in lines]
-        self.cells[starting_point[1]][starting_point[0]].lights[starting_direction] = True
+        self.starting_point = starting_point
+        if starting_point[1] < len(self.cells) and starting_point[0] < len(self.cells[0]):
+            self.cells[starting_point[1]][starting_point[0]].lights[starting_direction] = True
 
     def get_or_default(self, x, y):
         if y >= 0 and y < len(self.cells) and x >= 0 and x < len(self.cells[y]):
             return self.cells[y][x]
+        elif self.starting_point == (x, y):
+            c = Cell(".")
+            c.lights = [True] * 4
+            return c
         return Cell(".")
 
     def get_neighbours(self, x, y):
